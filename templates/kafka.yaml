@@ -2,9 +2,8 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   labels:
-    app: kafka
-  name: cluster-kafka
-  namespace: kafka
+    app: {{ .Values.kafkaInstance.app }}
+  name: {{ .Values.kafkaInstance.name }}
 spec:
   entityOperator:
     topicOperator: {}
@@ -19,9 +18,9 @@ spec:
       transaction.state.log.replication.factor: 3
     resources:
       limits:
-        memory: 8Gi
+        memory: {{ .Values.kafkaInstance.resources.limits.memory }}
       requests:
-        memory: 4Gi
+        memory: {{ .Values.kafkaInstance.resources.requests.memory }}
     readinessProbe:
       failureThreshold: 3
       initialDelaySeconds: 15
