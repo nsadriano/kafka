@@ -3,11 +3,10 @@ kind: KafkaConnect
 metadata:
   annotations:
     strimzi.io/use-connector-resources: 'true'
-  name: debezium23-ora19c-sso-connect-cluster
-  namespace: kafka
+  name: {{ .Values.kafkaConnectInstance.name }}
   labels:
-    app: kafka
-    instancia: debezium-oracle19c-sso
+    app: {{ .Values.kafkaConnectInstance.app }}
+    instancia: {{ .Values.kafkaConnectInstance.instancia }}
 spec:
   config:
     status.storage.topic: debezium23-ora19c-sso-connect-cluster-status
@@ -21,12 +20,12 @@ spec:
     config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
     config.providers: secrets
     offset.storage.replication.factor: -1
-  bootstrapServers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+  bootstrapServers: {{ .Values.kafkaConnectInstance.bootstrapServers }}
   resources:
     limits:
-      memory: 8Gi
+      memory: {{ .Values.kafkaConnectInstance.resources.limits.memory }}
     requests:
-      memory: 4Gi
+      memory: {{ .Values.kafkaConnectInstance.resources.requests.memory }}
   readinessProbe:
     failureThreshold: 3
     initialDelaySeconds: 15
@@ -41,7 +40,7 @@ spec:
     timeoutSeconds: 5
   build:
     output:
-      image: 'nexus.unifor.br:8443/unifor/debezium-connector:hmg-v1'
+      image: {{ .Values.kafkaConnectInstance.image.repository }}:{{ .Values.kafkaConnectInstance.image.tag }}
       pushSecret: secret-debezium-connector
       type: docker
     plugins:

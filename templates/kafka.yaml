@@ -38,7 +38,7 @@ spec:
       class: nfs-client
       size: 200Gi
       type: persistent-claim
-    replicas: 3
+    replicas: {{ .Values.kafkaInstance.replicas }}
     jvmOptions:
       '-Xms': 6g
       '-Xmx': 6g
@@ -53,7 +53,7 @@ spec:
         type: internal
       - configuration:
           bootstrap:
-            host: cluster-kafka-kafka-bootstrap-kafka.hmg.unifor.br
+            host: {{ .Values.kafkaInstance.bootstrap.host }}
           brokerCertChainAndKey:
             certificate: wildcard-hmg-unifor.br-2025.crt
             key: wildcard-hmg-unifor.br-2025.key
@@ -86,13 +86,13 @@ spec:
       periodSeconds: 10
       successThreshold: 1
       timeoutSeconds: 6
-    replicas: 3
+    replicas: {{ .Values.kafkaInstance.replicas }}
     resources:
       limits:
-        memory: 5Gi
+        memory: {{ .Values.kafkaInstance.resources.limits.memory }}
       requests:
-        memory: 2Gi
+        memory: {{ .Values.kafkaInstance.resources.requests.memory }}
     storage:
-      class: nfs-client
-      size: 100Gi
-      type: persistent-claim
+      class: {{ .Values.kafkaInstance.persistence.storageClassName }}
+      size: {{ .Values.kafkaInstance.persistence.size }}
+      type: {{ .Values.kafkaInstance.persistence.type }}

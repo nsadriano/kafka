@@ -1,0 +1,60 @@
+kafkaInstance:
+  name: cluster-kafka
+  app: kafka
+  replicas: 3
+  bootstrap:
+    host: cluster-kafka-kafka-bootstrap-kafka.hml.unifor.br
+  persistence:
+    type: persistent-claim
+    size: 100Gi
+    storageClassName: nfs-client
+  service:
+    type: ClusterIP
+    port: 9092
+  resources:
+    limits:
+      memory: 8Gi
+    requests:
+      memory: 4Gi
+
+kafkaConnectInstance:
+  name: debezium23-ora19c-sso-connect-cluster
+  app: kafka
+  instancia: debezium-oracle19c-sso
+  replicas: 1
+  bootstrap:
+    host: cluster-kafka-kafka-bootstrap-kafka.hml.unifor.br
+  bootstrapServers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+  image:
+    repository: nexus.unifor.br:8443/unifor/debezium-connector
+    tag: hmg-v1
+  resources:
+    limits:
+      memory: 8Gi
+    requests:
+      memory: 4Gi
+
+KafkaConnectorInstance:
+  name: oracle19c-hmg-connector
+  app: kafka
+  class: io.debezium.connector.oracle.OracleConnector
+  config:
+    table.include.list: >-
+      CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+    tasks.max: 1
+    database.hostname: ora-hmg.unifor.br
+    snapshot.mode: initial
+    database.password: '${secrets:kafka/debezium-secret:password}'
+    topic.prefix: ora_hmg.hmg
+    schema.include.list: 'CA,FI'
+    database.connection.adapter: logminer
+    database.port: 1521
+    connector.class: io.debezium.connector.oracle.OracleConnector
+    log.mining.transaction.retention.hours: 4
+    database.dbname: HMG
+    schema.history.internal.kafka.topic: hmg-ca-tables-history
+    database.user: '${secrets:kafka/debezium-secret:username}'
+    schema.history.internal.kafka.bootstrap.servers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+    snapshot.include.collection.list: >-
+      CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+    log.mining.batch.size.max: 50000000

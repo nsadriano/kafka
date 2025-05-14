@@ -3,15 +3,14 @@ kind: KafkaConnector
 metadata:
   labels:
     strimzi.io/cluster: debezium23-ora19c-sso-connect-cluster
-  name: oracle19c-hmg-connector
-  namespace: kafka
+  name: {{ include .Values.kafkaConnectInstance.name }}
 spec:
   class: io.debezium.connector.oracle.OracleConnector
   config:
     table.include.list: >-
-      CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+      {{ .Values.kafkaConnectorInstance.config.table.include.list | nindent 6 }}
     tasks.max: 1
-    database.hostname: ora-hmg.unifor.br
+    database.hostname: {{ .Values.kafkaconnector.connector.database.hostname }}
     snapshot.mode: initial
     database.password: '${secrets:kafka/debezium-secret:password}'
     topic.prefix: ora_hmg.hmg
@@ -23,8 +22,8 @@ spec:
     database.dbname: HMG
     schema.history.internal.kafka.topic: hmg-ca-tables-history
     database.user: '${secrets:kafka/debezium-secret:username}'
-    schema.history.internal.kafka.bootstrap.servers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+    schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafkaConnectorInstance.config.schema.history.internal.kafka.bootstrap.servers }}
     snapshot.include.collection.list: >-
-      CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+      {{ .Values.kafkaConnectorInstance.config.table.include.list | nindent 6 }}
     log.mining.batch.size.max: 50000000
   tasksMax: 1
