@@ -3,7 +3,7 @@ kind: KafkaConnector
 metadata:
   labels:
     strimzi.io/cluster: debezium23-ora19c-sso-connect-cluster
-  name: {{ include .Values.kafkaConnectInstance.name }}
+  name: {{ .Values.kafkaConnectInstance.name }}
 spec:
   class: io.debezium.connector.oracle.OracleConnector
   config:
