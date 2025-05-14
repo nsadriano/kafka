@@ -1,0 +1,30 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  labels:
+    strimzi.io/cluster: debezium23-ora19c-sso-connect-cluster
+  name: oracle19c-hmg-connector
+  namespace: kafka
+spec:
+  class: io.debezium.connector.oracle.OracleConnector
+  config:
+    table.include.list: >-
+      CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+    tasks.max: 1
+    database.hostname: ora-hmg.unifor.br
+    snapshot.mode: initial
+    database.password: '${secrets:kafka/debezium-secret:password}'
+    topic.prefix: ora_hmg.hmg
+    schema.include.list: 'CA,FI'
+    database.connection.adapter: logminer
+    database.port: 1521
+    connector.class: io.debezium.connector.oracle.OracleConnector
+    log.mining.transaction.retention.hours: 4
+    database.dbname: HMG
+    schema.history.internal.kafka.topic: hmg-ca-tables-history
+    database.user: '${secrets:kafka/debezium-secret:username}'
+    schema.history.internal.kafka.bootstrap.servers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+    snapshot.include.collection.list: >-
+      CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+    log.mining.batch.size.max: 50000000
+  tasksMax: 1

@@ -1,0 +1,76 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  annotations:
+    strimzi.io/use-connector-resources: 'true'
+  name: debezium23-ora19c-sso-connect-cluster
+  namespace: kafka
+  labels:
+    app: kafka
+    instancia: debezium-oracle19c-sso
+spec:
+  config:
+    status.storage.topic: debezium23-ora19c-sso-connect-cluster-status
+    status.storage.replication.factor: -1
+    offset.storage.topic: debezium23-ora19c-sso-connect-cluster-offsets
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    group.id: debezium23-ora19c-sso-connect-cluster
+    config.storage.replication.factor: -1
+    config.storage.topic: debezium23-ora19c-sso-connect-cluster-configs
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+    config.providers: secrets
+    offset.storage.replication.factor: -1
+  bootstrapServers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+  resources:
+    limits:
+      memory: 8Gi
+    requests:
+      memory: 4Gi
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  livenessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  build:
+    output:
+      image: 'nexus.unifor.br:8443/unifor/debezium-connector:hmg-v1'
+      pushSecret: secret-debezium-connector
+      type: docker
+    plugins:
+      - artifacts:
+          - type: tgz
+            url: >-
+              https://repo1.maven.org/maven2/io/debezium/debezium-connector-oracle/2.6.2.Final/debezium-connector-oracle-2.6.2.Final-plugin.tar.gz
+        name: debezium-oracle-connector262
+      - artifacts:
+          - type: tgz
+            url: >-
+              https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.6.2.Final/debezium-connector-mysql-2.6.2.Final-plugin.tar.gz
+        name: debezium-mysql-connector262
+      - artifacts:
+          - type: jar
+            url: >-
+              https://download.oracle.com/otn-pub/otn_software/jdbc/234/ojdbc11.jar
+        name: oraclejdbc11
+      - artifacts:
+          - type: jar
+            url: >-
+              https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.32/mysql-connector-j-8.0.32.jar
+        name: mysqljdbc832
+  version: 3.4.0
+  replicas: 3
+  jvmOptions:
+    '-Xms': 6g
+    '-Xmx': 6g
+  logging:
+    loggers:
+      log4j.rootLogger: INFO
+    type: inline

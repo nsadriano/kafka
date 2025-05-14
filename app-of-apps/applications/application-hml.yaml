@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka
+  namespace: argocd
+  labels:
+    kafka: infra
+spec:
+  destination:
+    namespace: kafka
+    name: in-cluster
+  project: default
+  source:
+    path: '.'
+    helm:
+      valueFiles:
+        - 'values/hml.yaml'
+    repoURL: 'https://github.com/nsadriano/kafka.git'
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - Replace=true
+    - ApplyOutOfSyncOnly=true
+    - PrunePropagationPolicy=foreground
+    - CreateNamespace=true
