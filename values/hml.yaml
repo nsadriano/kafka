@@ -39,9 +39,12 @@ KafkaConnectorInstance:
   app: kafka
   class: io.debezium.connector.oracle.OracleConnector
   config:
-    table.include.list: CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
+    table:
+      include:
+        list: CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
     tasks.max: 1
-    database.hostname: ora-hmg.unifor.br
+    database:
+      hostname: ora-hmg.unifor.br
     snapshot.mode: initial
     database.password: '${secrets:kafka/debezium-secret:password}'
     topic.prefix: ora_hmg.hmg
@@ -53,6 +56,11 @@ KafkaConnectorInstance:
     database.dbname: HMG
     schema.history.internal.kafka.topic: hmg-ca-tables-history
     database.user: '${secrets:kafka/debezium-secret:username}'
-    schema.history.internal.kafka.bootstrap.servers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
+    schema:
+      history:
+        internal:
+          kafka:
+            bootstrap:
+              servers: 'cluster-kafka-kafka-bootstrap.kafka:9092'
     snapshot.include.collection.list: CA.USUARIO,CA.CTR_TITULO_MODALIDADE,CA.CTR_TITULO_MOVIMENTO,CA.FAT_NOME_PARAMETRO,CA.FAT_NOME_MODALIDADE,FI.FUNCIONARIO
     log.mining.batch.size.max: 50000000
