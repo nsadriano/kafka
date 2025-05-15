@@ -3,12 +3,12 @@ kind: KafkaConnector
 metadata:
   labels:
     strimzi.io/cluster: debezium23-ora19c-sso-connect-cluster
-  name: {{ .Values.kafkaConnectInstance.name }}
+  name: {{ .Values.KafkaConnectorInstance.name }}
 spec:
   class: io.debezium.connector.oracle.OracleConnector
   config:
     table.include.list: >-
-      {{ .Values.kafkaConnectorInstance.config.table | indent 6 }}
+      {{ .Values.KafkaConnectorInstance.config.table.include.list | indent 6 }}
     tasks.max: 1
     database.hostname: {{ .Values.kafkaconnector.connector.database.hostname }}
     snapshot.mode: initial
@@ -22,8 +22,8 @@ spec:
     database.dbname: HMG
     schema.history.internal.kafka.topic: hmg-ca-tables-history
     database.user: '${secrets:kafka/debezium-secret:username}'
-    schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafkaConnectorInstance.config.schema.history.internal.kafka.bootstrap.servers }}
+    schema.history.internal.kafka.bootstrap.servers: {{ .Values.KafkaConnectorInstance.config.schema.history.internal.kafka.bootstrap.servers }}
     snapshot.include.collection.list: >-
-      {{ .Values.kafkaConnectorInstance.config.table| indent 6 }}
+      {{ .Values.KafkaConnectorInstance.config.table.include.list | indent 6 }}
     log.mining.batch.size.max: 50000000
   tasksMax: 1
