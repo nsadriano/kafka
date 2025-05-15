@@ -8,7 +8,7 @@ spec:
   class: io.debezium.connector.oracle.OracleConnector
   config:
     table.include.list: >-
-      {{ .Values.kafkaConnectorInstance.config.table.include.list | indent 6 }}
+      {{ .Values.kafkaConnectorInstance.config.table | indent 6 }}
     tasks.max: 1
     database.hostname: {{ .Values.kafkaconnector.connector.database.hostname }}
     snapshot.mode: initial
@@ -24,6 +24,6 @@ spec:
     database.user: '${secrets:kafka/debezium-secret:username}'
     schema.history.internal.kafka.bootstrap.servers: {{ .Values.kafkaConnectorInstance.config.schema.history.internal.kafka.bootstrap.servers }}
     snapshot.include.collection.list: >-
-      {{ .Values.kafkaConnectorInstance.config.table.include.list | indent 6 }}
+      {{ .Values.kafkaConnectorInstance.config.table| indent 6 }}
     log.mining.batch.size.max: 50000000
   tasksMax: 1
