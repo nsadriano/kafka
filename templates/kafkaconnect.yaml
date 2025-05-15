@@ -64,7 +64,7 @@ spec:
             url: >-
               https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.32/mysql-connector-j-8.0.32.jar
         name: mysqljdbc832
-  version: 3.4.0
+  version: 3.9.0
   replicas: 3
   jvmOptions:
     '-Xms': 6g
