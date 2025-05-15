@@ -10,7 +10,7 @@ spec:
     table.include.list: >-
       {{ .Values.KafkaConnectorInstance.config.table.include.list | indent 6 }}
     tasks.max: 1
-    database.hostname: {{ .Values.kafkaconnector.config.database.hostname }}
+    database.hostname: {{ .Values.KafkaConnectorInstance.config.database.hostname }}
     snapshot.mode: initial
     database.password: '${secrets:kafka/debezium-secret:password}'
     topic.prefix: ora_hmg.hmg
